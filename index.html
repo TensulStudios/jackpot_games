@@ -32,7 +32,9 @@ html,body{height:100%;overflow:hidden;background:#1e50b8;color:#fff;font-family:
 .start{display:none;position:absolute;left:0;right:0;bottom:0;height:3.4rem;background:rgba(14,28,84,.9);align-items:center;justify-content:center;font-size:1.5rem}
 .start i{position:absolute;right:.9rem;width:1.3rem;height:1.3rem;border:.2rem solid rgba(255,255,255,.7);border-radius:50%}
 .menu{position:absolute;top:calc(100% + .6rem);left:0;width:100%;background:rgba(12,24,80,.94);font-size:1.5rem;opacity:0;transition:opacity .3s}
-.menu div{height:2.5rem;line-height:2.5rem;padding:0 1rem;border-top:1px solid rgba(255,255,255,.12)}
+.raw-btn{display:block;width:100%;background:rgba(14,28,84,.94);border:1px solid rgba(255,255,255,.15);color:#fff;padding:.7rem 1rem;cursor:pointer;text-align:center;font-family:inherit;font-size:1.4rem;transition:background .2s,border-color .2s}
+.raw-btn:hover{background:rgba(24,54,140,.95);border-color:rgba(255,255,255,.3)}
+.raw-sub{display:block;font-size:1rem;opacity:.7;margin-top:.2rem;font-weight:300;letter-spacing:.02em}
 .sel .start{display:flex}
 .sel .menu,.sel .name{opacity:1}
 #foot{position:absolute;left:0;right:0;bottom:0;height:7rem;padding:.5rem 0 0 calc(var(--ox) + 4.4rem);border-top:1px solid rgba(255,255,255,.55);background:linear-gradient(#000,#050a1c);font-size:1.55rem;line-height:2.4rem}
@@ -77,7 +79,6 @@ const games=[
 {logo:"/sm64.png",url:"https://sites.google.com/view/emulatorjs/games/super-mario-64",name:"Super Mario 64"},
 ];
 
-// Preserved your original sounds and filled in launch/back with PS4 SFX URLs
 const sounds={
   music: "/main.mp3",
   move: "/move.mp3",
@@ -180,7 +181,7 @@ const host=new URL(g.url).hostname.replace(/^www\./,"");
 const t=document.createElement("div");
 t.className="tile";
 t.style.background=`linear-gradient(135deg,hsl(${n*57%360} 70% 45%),hsl(${n*57%360+40} 70% 22%))`;
-t.innerHTML=`<span class="fb">${host}</span><div class="start">Start<i></i></div><div class="menu"></div><div class="name">${g.name}</div>`;
+t.innerHTML=`<span class="fb">${host}</span><div class="start">Start<i></i></div><div class="menu"><button class="raw-btn" onclick="openRaw(event, ${n})">Open Raw URI<span class="raw-sub">Use if default isn't working</span></button></div><div class="name">${g.name}</div>`;
 if(g.logo){
 const img=new Image();
 img.src=g.logo;
@@ -201,12 +202,17 @@ tiles.forEach((t,k)=>t.classList.toggle("sel",k===i));
 }
 select(0);
 
+function openRaw(e, n){
+  e.stopPropagation();
+  play("launch");
+  window.open(games[n].url, '_blank');
+}
+
 async function launch(){
 if(busy)return;
 busy=true;
 play("launch");
 
-// Stop background music completely when entering a game
 if(music){
   music.pause();
   music.currentTime = 0;
@@ -236,7 +242,6 @@ function exitGame(){
 if(!document.body.classList.contains("open"))return;
 play("back");
 
-// Resume background music when returning to the home screen
 if(music){
   music.play().catch(()=>{});
 }
