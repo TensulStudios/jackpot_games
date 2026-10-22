@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 
-export default function Home() {
+export default function ProxyPage() {
   const [inputUrl, setInputUrl] = useState('');
   const [targetUrl, setTargetUrl] = useState('');
 
@@ -14,8 +14,8 @@ export default function Home() {
   };
 
   return (
-    <main style={{ padding: '20px', fontFamily: 'sans-serif', height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <h1>My Live Web Proxy</h1>
+    <main style={{ padding: '20px', fontFamily: 'sans-serif', height: '100vh', display: 'flex', flexDirection: 'column', boxSizing: 'border-box' }}>
+      <h1>Web Proxy Viewer</h1>
       
       <form onSubmit={handleLoad} style={{ marginBottom: '20px', display: 'flex', gap: '10px' }}>
         <input
@@ -34,8 +34,8 @@ export default function Home() {
       {targetUrl && (
         <div style={{ flex: 1, border: '1px solid #ccc', borderRadius: '4px', overflow: 'hidden' }}>
           <iframe
-            // Points directly to your deployed Vercel domain and API route
-            src={`https://jp.tames.online/api/proxy?url=${encodeURIComponent(targetUrl)}`}
+            // Points to your exact folder-nested API route
+            src={`https://jp.tames.online/proxy/api?url=${encodeURIComponent(targetUrl)}`}
             title="Proxied Content"
             style={{ width: '100%', height: '100%', border: 'none' }}
           />
