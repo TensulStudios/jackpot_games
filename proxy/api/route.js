@@ -9,12 +9,11 @@ export async function GET(request) {
   try {
     const parsed = new URL(targetUrl);
     
-    // Basic safety check to prevent internal/local network requests (SSRF protection)
+    // SSRF protection to prevent internal network requests
     if (['localhost', '127.0.0.1', '0.0.0.0'].includes(parsed.hostname) || parsed.protocol !== 'https:') {
       return new Response('Invalid or disallowed URL', { status: 400 });
     }
 
-    // Fetch the target website server-side
     const response = await fetch(targetUrl, {
       headers: {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -24,7 +23,7 @@ export async function GET(request) {
     const body = await response.arrayBuffer();
     const headers = new Headers(response.headers);
 
-    // Strip headers that prevent iframing
+    // Strip iframe-blocking headers
     headers.delete('x-frame-options');
     headers.delete('content-security-policy');
     headers.delete('content-security-policy-report-only');
